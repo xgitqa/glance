@@ -46,7 +46,7 @@ whitelist_rules:
   - generic_type_name
   - identical_operands
   - identifier_name
-  - implicit_getter
+
   - implicit_return
   - inert_defer
   - is_disjoint
@@ -72,7 +72,7 @@ whitelist_rules:
   - nimble_operator
   - no_extension_access_modifier
   - no_fallthrough_only
-  - no_space_in_method_call
+
   - notification_center_detachment
   - nsobject_prefer_isequal
   - number_separator
