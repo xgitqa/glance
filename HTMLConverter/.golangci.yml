@@ -1,20 +1,20 @@
-output:
-  print-issued-lines: false
-
 linters:
-  enable-all: true
-  disable:
-    - funlen
-    - gochecknoglobals
-    - gocognit
-    - gomnd
-    - maligned
-    - testpackage
-    - wsl
+  enable:
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+    - gofmt
+    - goimports
+    - misspell
+    - unconvert
+    - gocritic
 
 linters-settings:
   lll:
-    max-length: 100
+    line-length: 100
     tab-width: 2
 
 issues:
