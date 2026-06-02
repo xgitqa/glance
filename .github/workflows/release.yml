@@ -1,0 +1,91 @@
+name: Release (Apple Silicon Universal)
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build-and-release:
+    name: Build Universal Binary
+    runs-on: macos-14
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.21"
+
+      - name: Restore Go Modules cache
+        uses: actions/cache@v4
+        with:
+          path: ~/go/pkg/mod/
+          key: ${{ runner.os }}-go-mod-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-mod-
+
+      - name: Build universal Go C-archive
+        working-directory: HTMLConverter
+        run: |
+          CGO_ENABLED=1 GOARCH=arm64 CGO_CFLAGS="-arch arm64" CGO_LDFLAGS="-arch arm64" \
+            go build --buildmode=c-archive -ldflags "-s -w" -o ./htmlconverter_arm64.a
+          CGO_ENABLED=1 GOARCH=amd64 CGO_CFLAGS="-arch x86_64" CGO_LDFLAGS="-arch x86_64" \
+            go build --buildmode=c-archive -ldflags "-s -w" -o ./htmlconverter_amd64.a
+          lipo -create ./htmlconverter_arm64.a ./htmlconverter_amd64.a -output ./htmlconverter.a
+          cp ./htmlconverter_arm64.h ./htmlconverter.h
+
+      - name: Verify Go library is universal
+        run: lipo -info HTMLConverter/htmlconverter.a
+
+      - name: Build universal QLPlugin (xcodebuild archive)
+        run: |
+          xcodebuild archive \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            ARCHS="arm64 x86_64" \
+            ONLY_ACTIVE_ARCH=NO \
+            -project ./Glance.xcodeproj \
+            -scheme Glance \
+            -archivePath ./build/Glance.xcarchive \
+            SKIP_INSTALL=NO
+
+      - name: Locate and verify built plugin
+        run: |
+          find ./build/Glance.xcarchive -name "*.qlgenerator" | head -5
+          PLUGIN=$(find ./build/Glance.xcarchive -name "*.qlgenerator" | head -1)
+          echo "Plugin path: $PLUGIN"
+          lipo -info "$PLUGIN/Contents/MacOS/"*
+
+      - name: Package plugin as zip
+        run: |
+          PLUGIN=$(find ./build/Glance.xcarchive -name "*.qlgenerator" | head -1)
+          PLUGIN_NAME=$(basename "$PLUGIN")
+          cp -R "$PLUGIN" "./$PLUGIN_NAME"
+          zip -r "Glance-${{ github.ref_name }}-universal.zip" "$PLUGIN_NAME"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: "Glance-${{ github.ref_name }}-universal.zip"
+          body: |
+            ## Apple Silicon Universal Build
+
+            This release includes a **universal binary** supporting both:
+            - **Apple Silicon** (arm64) — native performance on M1/M2/M3/M4 Macs
+            - **Intel** (x86_64) — continues to work on Intel Macs
+
+            ### Installation
+            1. Unzip and move `Glance.qlgenerator` to `~/Library/QuickLook/`
+            2. Run `qlmanage -r` in Terminal to reload Quick Look plugins
+            3. If macOS blocks the plugin, remove the quarantine flag:
+               ```
+               xattr -d com.apple.quarantine ~/Library/QuickLook/Glance.qlgenerator
+               ```
+
+            > **Note:** This build is unsigned. macOS may show a security warning on first use.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

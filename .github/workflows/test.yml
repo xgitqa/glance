@@ -7,34 +7,39 @@ on:
 jobs:
   test-swift:
     name: Test (Swift)
-    runs-on: macos-latest
+    runs-on: macos-14
 
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.21"
 
       - name: Run tests
-        run: xcodebuild clean test CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO -project ./Glance.xcodeproj -scheme Glance
+        run: xcodebuild clean test CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO ARCHS="arm64 x86_64" ONLY_ACTIVE_ARCH=NO -project ./Glance.xcodeproj -scheme Glance
 
   test-go:
     name: Test (Go)
-    runs-on: macos-latest
+    runs-on: macos-14
     defaults:
       run:
         working-directory: ./HTMLConverter/
 
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up Go
-        uses: actions/setup-go@v1
+        uses: actions/setup-go@v5
         with:
-          go-version: 1.14
+          go-version: "1.21"
 
       - name: Restore Go Modules cache
         id: go-mod-cache
-        uses: actions/cache@v1
+        uses: actions/cache@v4
         with:
           path: ~/go/pkg/mod/
           key: ${{ runner.os }}-go-mod-${{ hashFiles('**/go.sum') }}
