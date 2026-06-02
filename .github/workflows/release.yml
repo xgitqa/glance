@@ -4,6 +4,12 @@ on:
   push:
     tags:
       - "v*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to release (e.g. v1.3.0)"
+        required: true
+        default: "v1.3.0"
 
 jobs:
   build-and-release:
@@ -13,6 +19,15 @@ jobs:
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v4
+
+      - name: Resolve version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "tag=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          else
+            echo "tag=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+          fi
 
       - name: Set up Go
         uses: actions/setup-go@v5
@@ -65,12 +80,14 @@ jobs:
           PLUGIN=$(find ./build/Glance.xcarchive -name "*.qlgenerator" | head -1)
           PLUGIN_NAME=$(basename "$PLUGIN")
           cp -R "$PLUGIN" "./$PLUGIN_NAME"
-          zip -r "Glance-${{ github.ref_name }}-universal.zip" "$PLUGIN_NAME"
+          zip -r "Glance-${{ steps.version.outputs.tag }}-universal.zip" "$PLUGIN_NAME"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: "Glance-${{ github.ref_name }}-universal.zip"
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: "${{ steps.version.outputs.tag }} — Apple Silicon Universal"
+          files: "Glance-${{ steps.version.outputs.tag }}-universal.zip"
           body: |
             ## Apple Silicon Universal Build
 
