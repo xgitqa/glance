@@ -45,9 +45,10 @@ func convertToGoString(cString *C.char) string {
 // Convention: Because all functions return C strings, errors are implemented as return values which
 // start with "error: ".
 
-//export convertCodeToHTML
 // convertCodeToHTML converts the provided source code string to HTML. Classes for syntax
 // highlighting are generated using Chroma.
+//
+//export convertCodeToHTML
 func convertCodeToHTML(source *C.char, lexer *C.char) *C.char {
 	sourceString := convertToGoString(source)
 	lexerString := convertToGoString(lexer)
@@ -86,9 +87,10 @@ func convertCodeToHTML(source *C.char, lexer *C.char) *C.char {
 	return convertToCString(htmlString)
 }
 
-//export convertMarkdownToHTML
 // convertMarkdownToHTML converts the provided Markdown string to HTML using goldmark. Classes for
 // syntax highlighting inside code blocks are generated using Chroma.
+//
+//export convertMarkdownToHTML
 func convertMarkdownToHTML(source *C.char) *C.char {
 	sourceString := convertToGoString(source)
 
@@ -106,8 +108,9 @@ func convertMarkdownToHTML(source *C.char) *C.char {
 	return convertToCString(htmlBuffer.String())
 }
 
-//export convertNotebookToHTML
 // convertNotebookToHTML converts the provided Jupyter Notebook JSON to HTML using `nbtohtml`.
+//
+//export convertNotebookToHTML
 func convertNotebookToHTML(source *C.char) *C.char {
 	sourceString := convertToGoString(source)
 
