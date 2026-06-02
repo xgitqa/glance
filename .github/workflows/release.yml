@@ -70,17 +70,20 @@ jobs:
 
       - name: Locate and verify built plugin
         run: |
-          find ./build/Glance.xcarchive -name "*.qlgenerator" | head -5
-          PLUGIN=$(find ./build/Glance.xcarchive -name "*.qlgenerator" | head -1)
+          echo "=== Archive contents ==="
+          find ./build/Glance.xcarchive -name "*.app" -o -name "*.appex" | head -10
+          APP=$(find ./build/Glance.xcarchive/Products -name "Glance.app" | head -1)
+          echo "App path: $APP"
+          lipo -info "$APP/Contents/MacOS/Glance"
+          PLUGIN=$(find "$APP" -name "*.appex" | head -1)
           echo "Plugin path: $PLUGIN"
           lipo -info "$PLUGIN/Contents/MacOS/"*
 
       - name: Package plugin as zip
         run: |
-          PLUGIN=$(find ./build/Glance.xcarchive -name "*.qlgenerator" | head -1)
-          PLUGIN_NAME=$(basename "$PLUGIN")
-          cp -R "$PLUGIN" "./$PLUGIN_NAME"
-          zip -r "Glance-${{ steps.version.outputs.tag }}-universal.zip" "$PLUGIN_NAME"
+          APP=$(find ./build/Glance.xcarchive/Products -name "Glance.app" | head -1)
+          cp -R "$APP" ./Glance.app
+          zip -r "Glance-${{ steps.version.outputs.tag }}-universal.zip" Glance.app
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
