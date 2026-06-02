@@ -46,7 +46,7 @@ whitelist_rules:
   - generic_type_name
   - identical_operands
   - identifier_name
-  - implicit_getter
+
   - implicit_return
   - inert_defer
   - is_disjoint
