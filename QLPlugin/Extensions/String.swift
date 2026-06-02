@@ -15,12 +15,12 @@ extension String {
 			options: [],
 			range: NSRange(location: 0, length: nsString.length)
 		)
-		return results.map { result in
-			(0 ..< result.numberOfRanges).map {
+		return results.map({ result in
+			(0 ..< result.numberOfRanges).map({
 				result.range(at: $0).location != NSNotFound
 					? nsString.substring(with: result.range(at: $0))
 					: ""
-			}
-		}
+			})
+		})
 	}
 }

@@ -61,7 +61,9 @@ extension NSMenuItem {
 	/// }
 	/// ```
 	var onAction: ActionClosure? {
-		get { AssociatedKeys.onActionClosure[self] }
+		get {
+			AssociatedKeys.onActionClosure[self]
+		}
 		set {
 			AssociatedKeys.onActionClosure[self] = newValue
 			action = #selector(callClosureGifski)
