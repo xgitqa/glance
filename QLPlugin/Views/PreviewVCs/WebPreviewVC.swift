@@ -55,10 +55,10 @@ class WebPreviewVC: NSViewController, PreviewVC {
 
 	private func loadPreview() {
 		let linkTags = stylesheets
-			.map({ $0.getHTML() })
+			.map { $0.getHTML() }
 			.joined(separator: "\n")
 		let scriptTags = scripts
-			.map({ $0.getHTML() })
+			.map { $0.getHTML() }
 			.joined(separator: "\n")
 
 		webView.loadHTMLString("""

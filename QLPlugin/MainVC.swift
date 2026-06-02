@@ -43,7 +43,7 @@ class MainVC: NSViewController, QLPreviewingController {
 		at fileUrl: URL,
 		completionHandler handler: @escaping (Error?) -> Void
 	) {
-		DispatchQueue.main.async(execute: {
+		DispatchQueue.main.async {
 			// Read information about the file to preview
 			var file: File
 			do {
@@ -99,7 +99,7 @@ class MainVC: NSViewController, QLPreviewingController {
 
 			// Hide preview loading spinner
 			handler(nil)
-		})
+		}
 	}
 
 	/// Generates a preview of the selected file and adds the corresponding child view controller.
