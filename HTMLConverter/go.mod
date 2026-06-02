@@ -1,6 +1,6 @@
 module github.com/samuelmeuli/glance
 
-go 1.14
+go 1.21
 
 require (
 	github.com/alecthomas/chroma v0.7.3
