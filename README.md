@@ -3,7 +3,7 @@
 	<h1>Glance</h1>
 	<p><strong>All-in-one Quick Look plugin</strong></p>
 	<p>Glance provides Quick Look previews for files that macOS doesn't support out of the box.</p>
-	<p><a href="https://apps.apple.com/app/id1513574319"><img src="./AppStore/Assets/DownloadBadge.svg" alt="Download on the Mac App Store"></a></p>
+	<p><a href="https://github.com/xgitqa/glance/releases/latest">⬇️ Download latest release (Universal — Apple Silicon &amp; Intel)</a></p>
 	<p><img src="./AppStore/Listing/Screenshots/Screenshot1.jpg" alt=""></p>
 </div>
 
