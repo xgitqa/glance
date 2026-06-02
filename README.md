@@ -3,6 +3,7 @@
 	<h1>Glance</h1>
 	<p><strong>All-in-one Quick Look plugin</strong></p>
 	<p>Glance provides Quick Look previews for files that macOS doesn't support out of the box.</p>
+	<p>✅ <strong>Universal binary</strong> — runs natively on Apple Silicon (M1/M2/M3/M4) and Intel Macs.</p>
 	<p><a href="https://github.com/xgitqa/glance/releases/latest">⬇️ Download latest release (Universal — Apple Silicon &amp; Intel)</a></p>
 	<p><img src="./AppStore/Listing/Screenshots/Screenshot1.jpg" alt=""></p>
 </div>
